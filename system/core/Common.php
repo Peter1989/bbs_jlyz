@@ -51,21 +51,18 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('is_php'))
-{
+if(!function_exists('is_php')){
 	/**
 	 * Determines if the current version of PHP is equal to or greater than the supplied value
 	 *
 	 * @param	string
 	 * @return	bool	TRUE if the current version is $version or higher
 	 */
-	function is_php($version)
-	{
+	function is_php($version){
 		static $_is_php;
-		$version = (string) $version;
+		$version = (string)$version;
 
-		if ( ! isset($_is_php[$version]))
-		{
+		if(!isset($_is_php[$version])){
 			$_is_php[$version] = version_compare(PHP_VERSION, $version, '>=');
 		}
 
