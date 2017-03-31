@@ -62,13 +62,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  *  Load the framework constants
  * ------------------------------------------------------
  */
-	if (file_exists(APPPATH.'config/'.ENVIRONMENT.'/constants.php'))
-	{
+	if(file_exists(APPPATH.'config/'.ENVIRONMENT.'/constants.php')){
 		require_once(APPPATH.'config/'.ENVIRONMENT.'/constants.php');
 	}
 
-	if (file_exists(APPPATH.'config/constants.php'))
-	{
+	if(file_exists(APPPATH.'config/constants.php')){
 		require_once(APPPATH.'config/constants.php');
 	}
 
@@ -85,13 +83,10 @@ defined('BASEPATH') OR exit('No direct script access allowed');
  * Security procedures
  * ------------------------------------------------------
  */
-
-if ( ! is_php('5.4'))
-{
+if(!is_php('5.4')){
 	ini_set('magic_quotes_runtime', 0);
 
-	if ((bool) ini_get('register_globals'))
-	{
+	if((bool)ini_get('register_globals')){
 		$_protected = array(
 			'_SERVER',
 			'_GET',
@@ -111,17 +106,13 @@ if ( ! is_php('5.4'))
 		);
 
 		$_registered = ini_get('variables_order');
-		foreach (array('E' => '_ENV', 'G' => '_GET', 'P' => '_POST', 'C' => '_COOKIE', 'S' => '_SERVER') as $key => $superglobal)
-		{
-			if (strpos($_registered, $key) === FALSE)
-			{
+		foreach(array('E' => '_ENV', 'G' => '_GET', 'P' => '_POST', 'C' => '_COOKIE', 'S' => '_SERVER') as $key => $superglobal){
+			if(strpos($_registered, $key) === FALSE){
 				continue;
 			}
 
-			foreach (array_keys($$superglobal) as $var)
-			{
-				if (isset($GLOBALS[$var]) && ! in_array($var, $_protected, TRUE))
-				{
+			foreach(array_keys($$superglobal) as $var){
+				if(isset($GLOBALS[$var]) && ! in_array($var, $_protected, TRUE)){
 					$GLOBALS[$var] = NULL;
 				}
 			}
@@ -155,8 +146,7 @@ if ( ! is_php('5.4'))
  * Note: Since the config file data is cached it doesn't
  * hurt to load it here.
  */
-	if ( ! empty($assign_to_config['subclass_prefix']))
-	{
+	if(!empty($assign_to_config['subclass_prefix'])){
 		get_config(array('subclass_prefix' => $assign_to_config['subclass_prefix']));
 	}
 
@@ -165,20 +155,14 @@ if ( ! is_php('5.4'))
  *  Should we use a Composer autoloader?
  * ------------------------------------------------------
  */
-	if ($composer_autoload = config_item('composer_autoload'))
-	{
-		if ($composer_autoload === TRUE)
-		{
+	if($composer_autoload = config_item('composer_autoload')){
+		if($composer_autoload === TRUE){
 			file_exists(APPPATH.'vendor/autoload.php')
 				? require_once(APPPATH.'vendor/autoload.php')
 				: log_message('error', '$config[\'composer_autoload\'] is set to TRUE but '.APPPATH.'vendor/autoload.php was not found.');
-		}
-		elseif (file_exists($composer_autoload))
-		{
+		}elseif(file_exists($composer_autoload)){
 			require_once($composer_autoload);
-		}
-		else
-		{
+		}else{
 			log_message('error', 'Could not find the specified $config[\'composer_autoload\'] path: '.$composer_autoload);
 		}
 	}
@@ -401,7 +385,6 @@ if ( ! is_php('5.4'))
 	$e404 = FALSE;
 	$class = ucfirst($RTR->class);
 	$method = $RTR->method;
-
 	if (empty($class) OR ! file_exists(APPPATH.'controllers/'.$RTR->directory.$class.'.php'))
 	{
 		$e404 = TRUE;
