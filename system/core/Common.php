@@ -808,8 +808,7 @@ if ( ! function_exists('_stringify_attributes'))
 
 // ------------------------------------------------------------------------
 
-if ( ! function_exists('function_usable'))
-{
+if(!function_exists('function_usable')){
 	/**
 	 * Function usable
 	 *
@@ -833,22 +832,32 @@ if ( ! function_exists('function_usable'))
 	 * @return	bool	TRUE if the function exists and is safe to call,
 	 *			FALSE otherwise.
 	 */
-	function function_usable($function_name)
-	{
+	function function_usable($function_name){
 		static $_suhosin_func_blacklist;
 
-		if (function_exists($function_name))
-		{
-			if ( ! isset($_suhosin_func_blacklist))
-			{
+		if(function_exists($function_name)){
+			if (!isset($_suhosin_func_blacklist)){
 				$_suhosin_func_blacklist = extension_loaded('suhosin')
 					? explode(',', trim(ini_get('suhosin.executor.func.blacklist')))
 					: array();
 			}
 
-			return ! in_array($function_name, $_suhosin_func_blacklist, TRUE);
+			return !in_array($function_name, $_suhosin_func_blacklist, TRUE);
 		}
 
 		return FALSE;
 	}
+}
+
+if(!function_exists('dump')){
+    /*
+    *Function usable
+    *
+    *This is a handy way to do var_dump
+    */
+
+    function dump($var){
+        var_dump($var);
+        exit;
+    }
 }

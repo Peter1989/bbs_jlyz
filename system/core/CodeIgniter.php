@@ -203,10 +203,8 @@ if(!is_php('5.4')){
 	$CFG =& load_class('Config', 'core');
 
 	// Do we have any manually set config items in the index.php file?
-	if (isset($assign_to_config) && is_array($assign_to_config))
-	{
-		foreach ($assign_to_config as $key => $value)
-		{
+	if(isset($assign_to_config) && is_array($assign_to_config)){
+		foreach($assign_to_config as $key => $value){
 			$CFG->set_item($key, $value);
 		}
 	}
@@ -228,8 +226,7 @@ if(!is_php('5.4')){
 	$charset = strtoupper(config_item('charset'));
 	ini_set('default_charset', $charset);
 
-	if (extension_loaded('mbstring'))
-	{
+	if(extension_loaded('mbstring')){
 		define('MB_ENABLED', TRUE);
 		// mbstring.internal_encoding is deprecated starting with PHP 5.6
 		// and it's usage triggers E_DEPRECATED messages.
@@ -237,28 +234,22 @@ if(!is_php('5.4')){
 		// This is required for mb_convert_encoding() to strip invalid characters.
 		// That's utilized by CI_Utf8, but it's also done for consistency with iconv.
 		mb_substitute_character('none');
-	}
-	else
-	{
+	}else{
 		define('MB_ENABLED', FALSE);
 	}
 
 	// There's an ICONV_IMPL constant, but the PHP manual says that using
 	// iconv's predefined constants is "strongly discouraged".
-	if (extension_loaded('iconv'))
-	{
+	if(extension_loaded('iconv')){
 		define('ICONV_ENABLED', TRUE);
 		// iconv.internal_encoding is deprecated starting with PHP 5.6
 		// and it's usage triggers E_DEPRECATED messages.
 		@ini_set('iconv.internal_encoding', $charset);
-	}
-	else
-	{
+	}else{
 		define('ICONV_ENABLED', FALSE);
 	}
 
-	if (is_php('5.6'))
-	{
+	if(is_php('5.6')){
 		ini_set('php.internal_encoding', $charset);
 	}
 
@@ -306,8 +297,7 @@ if(!is_php('5.4')){
  *	Is there a valid cache file? If so, we're done...
  * ------------------------------------------------------
  */
-	if ($EXT->call_hook('cache_override') === FALSE && $OUT->_display_cache($CFG, $URI) === TRUE)
-	{
+	if($EXT->call_hook('cache_override') === FALSE && $OUT->_display_cache($CFG, $URI) === TRUE){
 		exit;
 	}
 
@@ -348,13 +338,11 @@ if(!is_php('5.4')){
 	 *
 	 * @return CI_Controller
 	 */
-	function &get_instance()
-	{
+	function &get_instance(){
 		return CI_Controller::get_instance();
 	}
 
-	if (file_exists(APPPATH.'core/'.$CFG->config['subclass_prefix'].'Controller.php'))
-	{
+	if(file_exists(APPPATH.'core/'.$CFG->config['subclass_prefix'].'Controller.php')){
 		require_once APPPATH.'core/'.$CFG->config['subclass_prefix'].'Controller.php';
 	}
 
@@ -385,25 +373,17 @@ if(!is_php('5.4')){
 	$e404 = FALSE;
 	$class = ucfirst($RTR->class);
 	$method = $RTR->method;
-	if (empty($class) OR ! file_exists(APPPATH.'controllers/'.$RTR->directory.$class.'.php'))
-	{
+	if(empty($class) OR ! file_exists(APPPATH.'controllers/'.$RTR->directory.$class.'.php')){
 		$e404 = TRUE;
-	}
-	else
-	{
+	}else{
 		require_once(APPPATH.'controllers/'.$RTR->directory.$class.'.php');
 
-		if ( ! class_exists($class, FALSE) OR $method[0] === '_' OR method_exists('CI_Controller', $method))
-		{
+		if(!class_exists($class, FALSE) OR $method[0] === '_' OR method_exists('CI_Controller', $method)){
 			$e404 = TRUE;
-		}
-		elseif (method_exists($class, '_remap'))
-		{
+		}elseif(method_exists($class, '_remap')){
 			$params = array($method, array_slice($URI->rsegments, 2));
 			$method = '_remap';
-		}
-		elseif ( ! method_exists($class, $method))
-		{
+		}elseif(!method_exists($class, $method)){
 			$e404 = TRUE;
 		}
 		/**
@@ -417,53 +397,41 @@ if(!is_php('5.4')){
 		 * ReflectionMethod::isConstructor() is the ONLY reliable check,
 		 * knowing which method will be executed as a constructor.
 		 */
-		elseif ( ! is_callable(array($class, $method)) && strcasecmp($class, $method) === 0)
-		{
+		elseif(!is_callable(array($class, $method)) && strcasecmp($class, $method) === 0){
 			$reflection = new ReflectionMethod($class, $method);
-			if ( ! $reflection->isPublic() OR $reflection->isConstructor())
-			{
+			if (!$reflection->isPublic() OR $reflection->isConstructor()){
 				$e404 = TRUE;
 			}
 		}
 	}
 
-	if ($e404)
-	{
-		if ( ! empty($RTR->routes['404_override']))
-		{
-			if (sscanf($RTR->routes['404_override'], '%[^/]/%s', $error_class, $error_method) !== 2)
-			{
+	if($e404){
+		if (!empty($RTR->routes['404_override'])){
+			if(sscanf($RTR->routes['404_override'], '%[^/]/%s', $error_class, $error_method) !== 2){
 				$error_method = 'index';
 			}
 
 			$error_class = ucfirst($error_class);
 
-			if ( ! class_exists($error_class, FALSE))
-			{
-				if (file_exists(APPPATH.'controllers/'.$RTR->directory.$error_class.'.php'))
-				{
+			if(!class_exists($error_class, FALSE)){
+				if(file_exists(APPPATH.'controllers/'.$RTR->directory.$error_class.'.php')){
 					require_once(APPPATH.'controllers/'.$RTR->directory.$error_class.'.php');
 					$e404 = ! class_exists($error_class, FALSE);
 				}
 				// Were we in a directory? If so, check for a global override
-				elseif ( ! empty($RTR->directory) && file_exists(APPPATH.'controllers/'.$error_class.'.php'))
-				{
+				elseif(!empty($RTR->directory) && file_exists(APPPATH.'controllers/'.$error_class.'.php')){
 					require_once(APPPATH.'controllers/'.$error_class.'.php');
-					if (($e404 = ! class_exists($error_class, FALSE)) === FALSE)
-					{
+					if(($e404 = !class_exists($error_class, FALSE)) === FALSE){
 						$RTR->directory = '';
 					}
 				}
-			}
-			else
-			{
+			}else{
 				$e404 = FALSE;
 			}
 		}
 
 		// Did we reset the $e404 flag? If so, set the rsegments, starting from index 1
-		if ( ! $e404)
-		{
+		if (!$e404){
 			$class = $error_class;
 			$method = $error_method;
 
@@ -471,15 +439,12 @@ if(!is_php('5.4')){
 				1 => $class,
 				2 => $method
 			);
-		}
-		else
-		{
+		}else{
 			show_404($RTR->directory.$class.'/'.$method);
 		}
 	}
 
-	if ($method !== '_remap')
-	{
+	if($method !== '_remap'){
 		$params = array_slice($URI->rsegments, 2);
 	}
 
