@@ -857,7 +857,12 @@ if(!function_exists('dump')){
     */
 
     function dump($var){
-        var_dump($var);
+        if(is_object($var) || is_array($var)){ 
+            $return = json_encode($var);
+            echo $return;
+        }else{
+            var_dump($var);
+        }
         exit;
     }
 }
